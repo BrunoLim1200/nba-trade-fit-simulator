@@ -1,0 +1,26 @@
+# FastAPI & Server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-dotenv>=1.0.0
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.26.0
+
+# Database
+sqlalchemy>=2.0.23
+aiosqlite>=0.19.0
+
+# NBA Data
+nba_api>=1.4.1
+
+# Validation & Serialization
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# HTTP Client
+httpx>=0.25.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0

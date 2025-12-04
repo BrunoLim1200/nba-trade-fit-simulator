@@ -1,0 +1,30 @@
+/ nba-trade-fit-simulator / nba-trade-fit-simulator / frontend / src / app / features / simulator / components / result-display / result-display.component.scss
+
+/* Styles for the result display component */
+.result-display {
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-display h2 {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+}
+
+.result-display p {
+    font-size: 1em;
+    margin: 4px 0;
+}
+
+.result-display .verdict {
+    font-weight: bold;
+    color: #4caf50; /* Green for positive verdicts */
+}
+
+.result-display .explanation {
+    font-style: italic;
+    color: #555; /* Gray for explanation text */
+}

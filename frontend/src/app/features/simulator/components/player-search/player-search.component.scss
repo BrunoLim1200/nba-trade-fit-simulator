@@ -1,0 +1,31 @@
+.player-search {
+  display: flex;
+  flex-direction: column;
+  margin: 16px;
+
+  .search-input {
+    margin-bottom: 8px;
+  }
+
+  .search-button {
+    align-self: flex-start;
+  }
+
+  .player-list {
+    margin-top: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .player-item {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}

@@ -1,0 +1,123 @@
+<div class="simulator-container">
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>Simular Encaixe</mat-card-title>
+      <mat-card-subtitle>Selecione um jogador e um time para analisar</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="form-row">
+        <!-- Busca de Jogador -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar Jogador</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="playerSearchQuery"
+            (input)="searchPlayers()"
+            placeholder="Digite o nome do jogador..."
+            [matAutocomplete]="autoPlayer">
+          <mat-icon matSuffix>search</mat-icon>
+          <mat-autocomplete #autoPlayer="matAutocomplete">
+            @for (player of players(); track player.id) {
+              <mat-option [value]="player.full_name" (click)="selectPlayer(player)">
+                {{ player.full_name }}
+                @if (player.is_active) {
+                  <span class="active-badge">Ativo</span>
+                }
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        @if (selectedPlayer()) {
+          <div class="selected-info">
+            <mat-icon>person</mat-icon>
+            <span>{{ selectedPlayer()?.full_name }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="form-row">
+        <!-- Seleção de Time -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Selecionar Time</mat-label>
+          <mat-select (selectionChange)="selectTeam($event.value)">
+            @for (team of teams(); track team.id) {
+              <mat-option [value]="team">
+                {{ team.city }} {{ team.full_name }} ({{ team.abbreviation }})
+              </mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>groups</mat-icon>
+        </mat-form-field>
+
+        @if (selectedTeam()) {
+          <div class="selected-info">
+            <mat-icon>sports_basketball</mat-icon>
+            <span>{{ selectedTeam()?.full_name }}</span>
+          </div>
+        }
+      </div>
+
+      @if (error()) {
+        <div class="error-message">
+          <mat-icon>error</mat-icon>
+          {{ error() }}
+        </div>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="simulateFit()"
+        [disabled]="loading() || !selectedPlayer() || !selectedTeam()">
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <mat-icon>analytics</mat-icon>
+          Simular Encaixe
+        }
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Resultado da Simulação -->
+  @if (simulationResult()) {
+    <mat-card class="result-card">
+      <mat-card-header>
+        <mat-card-title>Resultado da Simulação</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="result-verdict" [style.background-color]="getVerdictColor(simulationResult()!.veredito)">
+          <h2>{{ simulationResult()!.veredito }}</h2>
+          <p class="minutes">{{ simulationResult()!.minutagem_estimada }} min/jogo</p>
+        </div>
+
+        <div class="result-details">
+          <h3>Análise</h3>
+          <p>{{ simulationResult()!.explicacao }}</p>
+
+          @if (simulationResult()!.player_per) {
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-label">Jogador</span>
+                <span class="stat-value">{{ simulationResult()!.player_name }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">PER</span>
+                <span class="stat-value">{{ simulationResult()!.player_per | number:'1.1-1' }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Time Alvo</span>
+                <span class="stat-value">{{ simulationResult()!.team_name }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

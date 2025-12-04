@@ -1,0 +1,15 @@
+<select>
+  <option value="team-selector.component.html">team-selector.component.html</option>
+</select>
+
+<div>
+  <h2>Selecione um Time</h2>
+  <mat-form-field appearance="fill">
+    <mat-label>Time</mat-label>
+    <mat-select [(value)]="selectedTeam" (selectionChange)="onTeamChange($event.value)">
+      <mat-option *ngFor="let team of teams" [value]="team.id">
+        {{ team.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

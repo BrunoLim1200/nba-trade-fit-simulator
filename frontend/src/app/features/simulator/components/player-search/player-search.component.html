@@ -1,0 +1,13 @@
+<div>
+  <mat-form-field appearance="fill">
+    <mat-label>Search Player</mat-label>
+    <input matInput [(ngModel)]="playerName" (ngModelChange)="onPlayerNameChange()" placeholder="Enter player name" />
+  </mat-form-field>
+
+  <mat-list>
+    <mat-list-item *ngFor="let player of filteredPlayers" (click)="selectPlayer(player)">
+      {{ player.name }} ({{ player.team }})
+    </mat-list-item>
+  </mat-list>
+</div>
+</div>

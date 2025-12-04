@@ -1,0 +1,11 @@
+<div>
+  <h2>Simulation Result</h2>
+  <div *ngIf="result">
+    <p><strong>Veredito:</strong> {{ result.veredito }}</p>
+    <p><strong>Minutagem Estimada:</strong> {{ result.minutagem_estimada }} minutos</p>
+    <p><strong>Explicação:</strong> {{ result.explicacao }}</p>
+  </div>
+  <div *ngIf="!result">
+    <p>Nenhum resultado disponível. Por favor, execute uma simulação.</p>
+  </div>
+</div>

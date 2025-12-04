@@ -91,29 +91,44 @@
       </mat-card-header>
       
       <mat-card-content>
-        <div class="result-verdict" [style.background-color]="getVerdictColor(simulationResult()!.veredito)">
-          <h2>{{ simulationResult()!.veredito }}</h2>
-          <p class="minutes">{{ simulationResult()!.minutagem_estimada }} min/jogo</p>
+        <div class="result-verdict" [style.background-color]="getVerdictColor(simulationResult()!.fit_label)">
+          <h2>{{ simulationResult()!.fit_label }}</h2>
+          <p class="minutes">{{ simulationResult()!.estimated_minutes | number:'1.0-0' }} min/jogo</p>
         </div>
 
         <div class="result-details">
           <h3>Análise</h3>
-          <p>{{ simulationResult()!.explicacao }}</p>
+          @for (reason of simulationResult()!.reasons; track reason) {
+            <p>{{ reason }}</p>
+          }
 
-          @if (simulationResult()!.player_per) {
-            <div class="stats-grid">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Jogador</span>
+              <span class="stat-value">{{ simulationResult()!.player_name }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Fit Score</span>
+              <span class="stat-value">{{ simulationResult()!.fit_score }}/100</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Time Alvo</span>
+              <span class="stat-value">{{ simulationResult()!.team_name }}</span>
+            </div>
+            @if (simulationResult()!.player_archetypes.length > 0) {
               <div class="stat-item">
-                <span class="stat-label">Jogador</span>
-                <span class="stat-value">{{ simulationResult()!.player_name }}</span>
+                <span class="stat-label">Arquétipos</span>
+                <span class="stat-value">{{ simulationResult()!.player_archetypes.join(', ') }}</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">PER</span>
-                <span class="stat-value">{{ simulationResult()!.player_per | number:'1.1-1' }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Time Alvo</span>
-                <span class="stat-value">{{ simulationResult()!.team_name }}</span>
-              </div>
+            }
+          </div>
+
+          @if (simulationResult()!.warnings.length > 0) {
+            <div class="warnings">
+              <h4>⚠️ Alertas</h4>
+              @for (warning of simulationResult()!.warnings; track warning) {
+                <p class="warning-item">{{ warning }}</p>
+              }
             </div>
           }
         </div>

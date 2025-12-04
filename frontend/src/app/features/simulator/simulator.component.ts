@@ -36,14 +36,11 @@ import { Team } from '@core/models/team.interface';
 export class SimulatorComponent {
   private readonly simulationService = inject(SimulationService);
 
-  // Signals para estado reativo
   playerSearchQuery = '';
   selectedPlayer = signal<PlayerSearchResult | null>(null);
   selectedTeam = signal<Team | null>(null);
-  
   players = signal<PlayerSearchResult[]>([]);
   teams = signal<Team[]>([]);
-  
   simulationResult = signal<SimulationResult | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
@@ -107,13 +104,17 @@ export class SimulatorComponent {
     });
   }
 
-  getVerdictColor(verdict: string): string {
+  getVerdictColor(label: string): string {
     const colors: Record<string, string> = {
-      'Titular': '#4CAF50',
-      '6º Homem': '#2196F3',
-      'Rotação': '#FF9800',
-      'Banco/Garbage Time': '#f44336'
+      'Franchise Savior': '#FFD700',
+      'Perfect Fit': '#4CAF50',
+      'Starter': '#8BC34A',
+      '6th Man': '#2196F3',
+      'Rotation Player': '#FF9800',
+      'Situational': '#FF5722',
+      'Bad Fit': '#f44336',
+      'Redundant': '#9E9E9E'
     };
-    return colors[verdict] || '#757575';
+    return colors[label] || '#757575';
   }
 }

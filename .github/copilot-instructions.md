@@ -7,11 +7,11 @@ applyTo: '**'
 ## Contexto
 **NBA Trade Fit Simulator** é uma aplicação full-stack para simular o encaixe de jogadores da NBA em times específicos. Analisa estatísticas de jogadores, identifica arquétipos, detecta lacunas do time e calcula um "Fit Score" usando algoritmos de Data Science com Pandas.
 
-**Status**: ��� Em desenvolvimento ativo (Dezembro 2025)
+**Status**: ��� Em desenvolvimento ativo (Dezembro 2025)
 
 ## Regras Críticas
 
-### ��� Prioridade Máxima
+### ��� Prioridade Máxima
 - **NUNCA** remova código de produção sem validação completa dos impactos
 - **NUNCA** rode comandos `sleep` ou similares para aguardar processos - sempre use comandos em background e obtenha output via get_terminal_output
 - **NUNCA** interrompa processos em background com Ctrl+C
@@ -403,6 +403,121 @@ score -= friction.total_penalty
 
 ---
 
+## Filosofia de Testes
+
+### Princípios Fundamentais
+- **Testes com propósito**: Cada teste deve validar uma regra de negócio específica
+- **Qualidade > Coverage**: Não escreva testes apenas para aumentar métricas
+- **Testes como documentação**: O nome do teste deve explicar a regra validada
+- **Fixtures realistas**: Use dados que representem cenários reais da NBA
+
+### O que testar (Backend)
+| Categoria | Exemplo |
+|-----------|---------|
+| **Regras de negócio** | Sniper: 3PA >= 5.0 E 3P% >= 37% |
+| **Thresholds e limites** | Score nunca < 0 ou > 100 |
+| **Combinações de arquétipos** | Jogador pode ser Sniper + 3&D |
+| **Conflitos de elenco** | Ball Dominant + 2 stars = -30pts |
+| **Edge cases** | Jogador sem stats, time não encontrado |
+
+### O que testar (Frontend)
+| Categoria | Exemplo |
+|-----------|---------|
+| **Chamadas HTTP** | Params corretos no endpoint |
+| **Estado do componente** | Loading, error, resultado |
+| **Interações do usuário** | Seleção de jogador/time |
+| **Validações** | Mínimo 2 caracteres para busca |
+
+### Estrutura de Testes Backend
+```
+backend/tests/
+├── conftest.py                    # Fixtures compartilhadas
+├── test_player_archetype_service.py  # Regras de arquétipos
+├── test_team_gap_service.py       # Identificação de lacunas
+├── test_roster_friction_service.py # Conflitos de elenco
+├── test_fit_simulator.py          # Cálculo final do score
+└── test_simulation.py             # Testes de integração API
+```
+
+### Estrutura de Testes Frontend
+```
+src/app/
+├── core/services/
+│   └── simulation.service.spec.ts  # Chamadas HTTP
+└── features/simulator/
+    └── simulator.component.spec.ts # Lógica do componente
+```
+
+### Exemplo de Teste com Propósito (Backend)
+```python
+def test_ball_dominant_with_two_stars_max_penalty(
+    self, ball_dominant_stats, team_with_multiple_stars
+):
+    """Ball Dominant + Time com 2+ Ball Dominants = -30 pontos"""
+    player = self._analyze_player(ball_dominant_stats)
+    friction = self.friction_service.analyze_friction(
+        player, team_with_multiple_stars
+    )
+    
+    assert friction.total_penalty >= 30
+    assert any(c.conflict_type == "Too Many Cooks" for c in friction.conflicts)
+```
+
+### Exemplo de Teste com Propósito (Frontend)
+```typescript
+it('should show error if player not selected', () => {
+  component.selectedTeam.set(mockTeams[0]);
+  
+  component.simulateFit();
+
+  expect(component.error()).toBe('Selecione um jogador e um time.');
+});
+```
+
+### Comandos de Teste
+```bash
+# Backend
+cd backend
+pytest                           # Rodar todos os testes
+pytest tests/test_archetype.py   # Rodar arquivo específico
+pytest -v                        # Verbose
+pytest --tb=short               # Traceback curto
+
+# Frontend
+cd frontend
+ng test                          # Modo watch
+ng test --no-watch              # CI mode
+ng test --code-coverage         # Com coverage
+```
+
+---
+
+## Estilo de Código
+
+### Comentários
+- **Código auto-explicativo**: Nomes claros dispensam comentários
+- **Comente o "porquê"**: Não o "o quê"
+- **Remova TODOs**: Resolva ou crie issue
+- **Sem comentários óbvios**: `# Incrementa contador` em `counter += 1`
+
+### Exemplo de Código Limpo (sem comentários desnecessários)
+```python
+# ❌ RUIM - comentários óbvios
+# Verifica se jogador é sniper
+# Se 3PA >= 5 e 3P% >= 37%, é sniper
+sniper_score = 0
+if stats.fg3a >= 5.0:  # Verifica tentativas de 3
+    if stats.fg3_pct >= 0.37:  # Verifica porcentagem
+        sniper_score = 85
+
+# ✅ BOM - código auto-explicativo
+sniper_score = 0
+if stats.fg3a >= 5.0 and stats.fg3_pct >= 0.37:
+    sniper_score = 85
+```
+
+---
+
 ## Ao Fazer Mudanças
 
 ### SEMPRE
@@ -598,7 +713,7 @@ app.add_middleware(
 
 ---
 
-## ��� Quick Start
+## ��� Quick Start
 
 ```bash
 # 1. Clonar repositório
@@ -624,7 +739,7 @@ ng serve
 
 ---
 
-## ��� Checklist de PR
+## ��� Checklist de PR
 
 - [ ] Código compila sem erros
 - [ ] Testes passam: `pytest` (backend) e `ng test` (frontend)
@@ -637,7 +752,7 @@ ng serve
 
 ---
 
-## ��� Roadmap
+## ��� Roadmap
 
 ### MVP (Atual)
 - ✅ Busca de jogadores por nome
@@ -646,16 +761,16 @@ ng serve
 - ✅ Exibição de resultado com score e reasons
 
 ### v1.0 (Próximo)
-- ��� Gráficos de breakdown do score (ngx-charts)
-- ��� Comparação side-by-side de múltiplos trades
-- ��� Histórico de simulações (SQLite)
-- ��� Cache de dados da NBA API
+- ��� Gráficos de breakdown do score (ngx-charts)
+- ��� Comparação side-by-side de múltiplos trades
+- ��� Histórico de simulações (SQLite)
+- ��� Cache de dados da NBA API
 
 ### v2.0 (Futuro)
-- ��� Multi-player trades
-- ��� Salary cap analysis
-- ��� Draft pick simulation
-- ��� Deploy em cloud (Azure/AWS)
+- ��� Multi-player trades
+- ��� Salary cap analysis
+- ��� Draft pick simulation
+- ��� Deploy em cloud (Azure/AWS)
 
 ---
 

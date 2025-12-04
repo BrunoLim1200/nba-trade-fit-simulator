@@ -13,9 +13,6 @@ export class SimulationService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  /**
-   * Simula o encaixe de um jogador em um time
-   */
   simulateFit(playerId: number, teamId: number): Observable<SimulationResult> {
     const params = new HttpParams()
       .set('player_id', playerId.toString())
@@ -24,17 +21,11 @@ export class SimulationService {
     return this.http.get<SimulationResult>(`${this.apiUrl}/simulate-fit`, { params });
   }
 
-  /**
-   * Busca jogadores pelo nome
-   */
   searchPlayers(name: string): Observable<PlayerSearchResult[]> {
     const params = new HttpParams().set('name', name);
     return this.http.get<PlayerSearchResult[]>(`${this.apiUrl}/players/search`, { params });
   }
 
-  /**
-   * Retorna todos os times da NBA
-   */
   getAllTeams(): Observable<Team[]> {
     return this.http.get<Team[]>(`${this.apiUrl}/teams`);
   }
